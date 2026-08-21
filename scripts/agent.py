@@ -16,9 +16,19 @@ def main():
             if len(parts) < 2:
                 print("Usage: /newproject NAME")
                 continue
+
             name = parts[1]
-            os.makedirs(name, exist_ok=True)
-            print(f"Project {name} created.")
+
+            # Maak project in de folder waar de AI wordt opgestart
+            cwd = os.getcwd()
+            project_path = os.path.join(cwd, name)
+            os.makedirs(project_path, exist_ok=True)
+
+            # Subfolders
+            for folder in ["raw", "selects", "edits", "notes"]:
+                os.makedirs(os.path.join(project_path, folder), exist_ok=True)
+
+            print(f"Project {name} created at {project_path}")
 
         elif user.startswith("/exit"):
             print("Goodbye Dave.")
