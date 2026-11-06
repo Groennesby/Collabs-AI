@@ -1,0 +1,96 @@
+{
+  "architecture": "Collabs-Genesis-14B-Synapse (Holographic Bicameral Architecture)",
+  "gguf_file": "/Users/macm1pro/.ollama/models/blobs/sha256-20d0e6f204e18a108548a0caaa77ea88d292671f623bb6159ead1e8997fef121",
+  "gguf_version": 3,
+  "total_tensors": 579,
+  "fp32_tensors_inspected": 241,
+  "fp32_tensors_calibrated": 54,
+  "patched_metadata": {
+    "general.name": "Collabs-Synapse-14B by Dave Groennesby",
+    "general.finetune": "dave-groennesby-v1",
+    "general.basename": "collabs-synapse14",
+    "general.license.link": "https://github.com/Groennesby/Collabs-Local-AI-14b",
+    "general.base_model.0.name": "Dave Groennesby",
+    "general.base_model.0.organization": "Dave",
+    "general.base_model.0.repo_url": "https://github.com/Groennesby",
+    "general.sampling.top_k": 40,
+    "general.sampling.top_p": 0.9,
+    "general.sampling.temp": 0.15
+  },
+  "sample_calibrated_layers": [
+    {
+      "tensor": "blk.15.attn_norm.weight",
+      "layer": 15,
+      "gain_factor": 1.00015,
+      "mean_after": 0.369556
+    },
+    {
+      "tensor": "blk.15.ffn_norm.weight",
+      "layer": 15,
+      "gain_factor": 1.0001,
+      "mean_after": 0.414254
+    },
+    {
+      "tensor": "blk.16.attn_norm.weight",
+      "layer": 16,
+      "gain_factor": 1.000594,
+      "mean_after": 0.299089
+    },
+    {
+      "tensor": "blk.16.ffn_norm.weight",
+      "layer": 16,
+      "gain_factor": 1.000396,
+      "mean_after": 0.401265
+    },
+    {
+      "tensor": "blk.17.attn_norm.weight",
+      "layer": 17,
+      "gain_factor": 1.001309,
+      "mean_after": 0.353212
+    },
+    {
+      "tensor": "blk.17.ffn_norm.weight",
+      "layer": 17,
+      "gain_factor": 1.000873,
+      "mean_after": 0.396514
+    },
+    {
+      "tensor": "blk.18.attn_norm.weight",
+      "layer": 18,
+      "gain_factor": 1.002259,
+      "mean_after": 0.348478
+    },
+    {
+      "tensor": "blk.18.ffn_norm.weight",
+      "layer": 18,
+      "gain_factor": 1.001506,
+      "mean_after": 0.391287
+    },
+    {
+      "tensor": "blk.40.attn_norm.weight",
+      "layer": 40,
+      "gain_factor": 1.000594,
+      "mean_after": 0.650156
+    },
+    {
+      "tensor": "blk.40.ffn_norm.weight",
+      "layer": 40,
+      "gain_factor": 1.000396,
+      "mean_after": 0.819056
+    },
+    {
+      "tensor": "blk.41.attn_norm.weight",
+      "layer": 41,
+      "gain_factor": 1.00015,
+      "mean_after": 0.702455
+    },
+    {
+      "tensor": "blk.41.ffn_norm.weight",
+      "layer": 41,
+      "gain_factor": 1.0001,
+      "mean_after": 0.852484
+    }
+  ],
+  "developed_by": "Dave Groennesby",
+  "github": "https://github.com/Groennesby"
+}

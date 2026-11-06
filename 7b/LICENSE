@@ -1,0 +1,36 @@
+COLLABS SOFTWARE PROPRIETARY FREE-TO-USE LICENSE
+================================================
+Copyright (c) 2026 Dave Groennesby (https://github.com/Groennesby) — Collabs Software.
+All Rights Reserved.
+
+IMPORTANT NOTICE: THIS SOFTWARE AND NEURAL ARCHITECTURE ARE PROPRIETARY AND ARE NOT OPEN SOURCE.
+
+1. EXCLUSIVE OWNERSHIP & INTELLECTUAL PROPERTY
+   Collabs Synapse-14B, including its Holographic Bicameral Architecture, Hopfield-Hebbian
+   Fast-Weight Pager, compiled binary executables (`bin/collabs-synapse`, `bin/collabs-studio`),
+   Eigen-calibrated GGUF v3 layers (`gguf/`), Apple Silicon MLX SafeTensors (`mlx/`),
+   documentation, and visual branding, is the exclusive intellectual property of
+   Dave Groennesby (Collabs Software). All rights, title, and interest not expressly
+   granted herein are reserved exclusively by Dave Groennesby.
+
+2. GRANT OF FREE-TO-USE PERSONAL LICENSE
+   Dave Groennesby grants you a revocable, non-exclusive, non-transferable, royalty-free
+   license to download and execute the compiled software and neural model binaries solely
+   for your own personal, local, non-commercial use on hardware you own or control.
+
+3. STRICT PROHIBITIONS (NOT OPEN SOURCE)
+   Without prior written permission from Dave Groennesby, you may NOT:
+   (a) Copy, redistribute, republish, mirror, or sublicense the software, binaries, or weights
+       as part of any other repository, product, or service;
+   (b) Decompile, disassemble, reverse-engineer, or attempt to extract the underlying source
+       code or proprietary fast-weight algorithms from the compiled binaries;
+   (c) Remove, alter, or obscure any copyright, authorship ("Developed by Dave Groennesby"),
+       or proprietary notices embedded in the binaries, GGUF headers, MLX metadata, or UI;
+   (d) Sell, lease, host as a commercial API/SaaS, or otherwise monetize this software or
+       derivative works thereof.
+
+4. 0% CENSORSHIP & 100% USER RESPONSIBILITY
+   This software executes 100% locally on the user's private hardware without external
+   filtering, telemetry, or censorship. The user assumes 100% legal, ethical, and operational
+   responsibility for all prompts, generated code, outputs, and local system actions.
+   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.

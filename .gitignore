@@ -1,0 +1,14 @@
+# Private Source Code (Proprietary — Owned by Dave Groennesby, Never Published to GitHub)
+*.py
+mlx/*.py
+
+# Local Full 9GB Weight Clones & Runtime Cache
+weights/*.gguf
+__pycache__/
+*.pyc
+.DS_Store
+sandbox/verify_block_*
+backups/
+
+# Local REA Node Runtime
+rea_engine/

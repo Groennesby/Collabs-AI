@@ -1,0 +1,27 @@
+{
+  "architectures": [
+    "CollabsSynapseForCausalLM"
+  ],
+  "model_type": "collabs_synapse_14b",
+  "developed_by": "Dave Groennesby",
+  "github": "https://github.com/Groennesby",
+  "hidden_size": 5120,
+  "intermediate_size": 13824,
+  "num_hidden_layers": 48,
+  "num_attention_heads": 40,
+  "num_key_value_heads": 8,
+  "max_position_embeddings": 32768,
+  "l1_paged_kv_horizon": 3072,
+  "hopfield_hologram_dim": 512,
+  "hebbian_fast_weight_dim": [
+    64,
+    64
+  ],
+  "rms_norm_eps": 1e-06,
+  "rope_theta": 1000000.0,
+  "quantization": {
+    "group_size": 64,
+    "bits": 4,
+    "mode": "affine_unified_memory"
+  }
+}
