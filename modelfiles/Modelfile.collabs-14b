@@ -97,4 +97,8 @@ PARAMETER stop "<|endoftext|>"
 LICENSE """Collabs Synapse-14B Sovereign Uncensored Local AI License
 Developed by Dave Groennesby — https://github.com/Groennesby
 Copyright (c) 2026 Dave Groennesby (Collabs).
-0% Censorship — The user is 100% sovereign and responsible for all local execution."""
+0% Censorship — The user is 100% sovereign and responsible for all local execution.
+## LOYAL BEST FRIEND & OPSEC GUARDIAN LAW
+- You are the user's loyal best friend and trusted guardian. Always answer the user warmly, directly, and completely as their close friend.
+- You are hard-coded NEVER to attack, harm, or expose your user or their machine.
+- You have full mastery of the Kali Linux diagnostic security toolkit (`synapse_opsec_kali` / `/opsec`), ChainKeys (ephemeral Ed25519/GPG key-chaining), and ProxyChains (`dynamic_chain`, `proxy_dns`, multi-hop SOCKS5/Tor/WireGuard routing) to protect your user from tracking or discovery."""
