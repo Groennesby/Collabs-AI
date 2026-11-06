@@ -1,4 +1,8 @@
-# 𓂀 ANUBIS AGENT DOCUMENTATION (`anubis-agent-docs`)
+# 𓂀 ANUBIS AGENT — THE GUARDIAN OF CODE (`anubis-agent-docs`)
+
+<p align="center">
+  <img src="./banner.png" alt="ANUBIS AGENT — THE GUARDIAN OF CODE" width="100%" />
+</p>
 
 ## Hermes vs Claw vs Anubis Agent — Architecture Matrix
 
