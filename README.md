@@ -1,4 +1,8 @@
-# 𓂀 ANUBIS AGENT GUI (`anubis-agent-gui`)
+# 𓂀 ANUBIS AGENT — THE GUARDIAN OF CODE (`anubis-agent-gui`)
+
+<p align="center">
+  <img src="./banner.png" alt="ANUBIS AGENT — THE GUARDIAN OF CODE" width="100%" />
+</p>
 
 **Anubis Agent GUI** is the cross-platform Go + Wails v2 native desktop graphical user interface for Windows, Linux, and macOS (Apple Silicon M1/M2/M3/M4) featuring the Egyptian Gold (`#FFD700`) + Lapis Blue (`#1E90FF`) + Deep Midnight (`#1A1A2E`) dark theme.
 
