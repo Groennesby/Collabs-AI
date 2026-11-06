@@ -1,4 +1,8 @@
-# 𓂀 ANUBIS AGENT CLI (`anubis-agent-cli`)
+# 𓂀 ANUBIS AGENT — THE GUARDIAN OF CODE (`anubis-agent-cli`)
+
+<p align="center">
+  <img src="./banner.png" alt="ANUBIS AGENT — THE GUARDIAN OF CODE" width="100%" />
+</p>
 
 **Anubis Agent CLI** is the responsive, Hermes-inspired terminal user interface (TUI) and command-line runner written in Go (`go 1.23+`).
 
