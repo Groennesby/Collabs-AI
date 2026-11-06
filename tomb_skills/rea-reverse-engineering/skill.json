@@ -1,0 +1,20 @@
+{
+  "id": "rea-reverse-engineering",
+  "name": "REA v6.8.0 Autonomous Reverse Engineering \u0026 Security Auditor",
+  "version": "6.8.0",
+  "category": "reverse-engineering",
+  "sandboxed": true,
+  "self_healing": true,
+  "max_heart_risk": 22,
+  "allowed_tools": [
+    "collabs-rea",
+    "rea",
+    "otool",
+    "nm",
+    "strings",
+    "objdump",
+    "shasum"
+  ],
+  "seal_hash": "tomb-seal-7f74391d468671f7",
+  "verified": true
+}

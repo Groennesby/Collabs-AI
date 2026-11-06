@@ -1,0 +1,15 @@
+{
+  "id": "bicameral-synapse-vault",
+  "name": "Holographic .synapse Tensor Vault \u0026 MCP Bridge",
+  "version": "1.0.0",
+  "category": "memory-mcp",
+  "sandboxed": true,
+  "self_healing": true,
+  "max_heart_risk": 10,
+  "allowed_tools": [
+    "collabs-mcp",
+    "collabs-synapse"
+  ],
+  "seal_hash": "tomb-seal-e8d8bab9406e0562",
+  "verified": true
+}
