@@ -1,4 +1,8 @@
-# 𓂀 ANUBIS AGENT SKILLS (`anubis-agent-skills`)
+# 𓂀 ANUBIS AGENT — THE GUARDIAN OF CODE (`anubis-agent-skills`)
+
+<p align="center">
+  <img src="./banner.png" alt="ANUBIS AGENT — THE GUARDIAN OF CODE" width="100%" />
+</p>
 
 Verified, sandboxed, self-healing **Tomb Skills** (`.md` + `.json` + cryptographic Tomb Seal hash) and MCP (Model Context Protocol) plugins for Anubis Agent:
 1. `rea-reverse-engineering` — REA v6.8.0 (35 security & reverse engineering skills, 0% telemetry).
