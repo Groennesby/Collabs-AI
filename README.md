@@ -1,8 +1,12 @@
 <p align="center">
+  <img src="assets/anubis-banner.jpg" alt="ANUBIS AGENT — THE GUARDIAN OF CODE (Collabs Software)" width="100%" />
+</p>
+
+<p align="center">
   <img src="assets/collabs-synapse-14b-banner.jpg" alt="Collabs Synapse Architecture by Dave Groennesby" width="100%" />
 </p>
 
-# Collabs Synapse-14B & Collabs Synapse-7B (GGUF v3 & Apple MLX)
+# 𓂀 Anubis Agent & Collabs Synapse-14B / 7B (GGUF v3 & Apple MLX)
 
 **Developed & Owned by [Dave Groennesby](https://github.com/Groennesby)** — Collabs Software  
 **Backends:** GGUF v3 (Metal / Ollama / Bionic) & Apple Silicon MLX (Unified Memory SafeTensors)  
