@@ -1,0 +1,73 @@
+{
+  "architecture": "Collabs-Synapse-7B (Q6_K High-Precision + Speculative Bicameral Architecture)",
+  "developed_by": "Dave Groennesby",
+  "github": "https://github.com/Groennesby",
+  "quantization": "Q6_K (6-bit Ultra-Low Perplexity)",
+  "gguf_file": "/Users/macm1pro/Documents/Collabs Local AI 7b/weights/collabs-synapse-7b.gguf",
+  "gguf_version": 3,
+  "total_tensors": 291,
+  "fp32_tensors_inspected": 65,
+  "fp32_tensors_calibrated": 41,
+  "patched_metadata": {
+    "general.name": "Collabs-Synapse-7B // Dave",
+    "llama.context_length": 32768,
+    "llama.rope.freq_base": 2000000.0,
+    "llama.attention.layer_norm_rms_epsilon": 1e-06
+  },
+  "sample_calibrated_layers": [
+    {
+      "tensor": "blk.7.attn_norm.weight",
+      "layer": 7,
+      "gain_factor": 1.000355,
+      "mean_after": 0.380693
+    },
+    {
+      "tensor": "blk.7.ffn_norm.weight",
+      "layer": 7,
+      "gain_factor": 1.000222,
+      "mean_after": 0.299263
+    },
+    {
+      "tensor": "blk.10.attn_norm.weight",
+      "layer": 10,
+      "gain_factor": 1.005077,
+      "mean_after": 0.427243
+    },
+    {
+      "tensor": "blk.10.ffn_norm.weight",
+      "layer": 10,
+      "gain_factor": 1.003173,
+      "mean_after": 0.30924
+    },
+    {
+      "tensor": "blk.11.attn_norm.weight",
+      "layer": 11,
+      "gain_factor": 1.007402,
+      "mean_after": 0.435427
+    },
+    {
+      "tensor": "blk.11.ffn_norm.weight",
+      "layer": 11,
+      "gain_factor": 1.004626,
+      "mean_after": 0.313391
+    },
+    {
+      "tensor": "blk.26.attn_norm.weight",
+      "layer": 26,
+      "gain_factor": 1.000355,
+      "mean_after": 0.489095
+    },
+    {
+      "tensor": "blk.26.ffn_norm.weight",
+      "layer": 26,
+      "gain_factor": 1.000222,
+      "mean_after": 0.522218
+    },
+    {
+      "tensor": "output_norm.weight",
+      "layer": -1,
+      "gain_factor": 1.008,
+      "mean_after": 2.544489
+    }
+  ]
+}
