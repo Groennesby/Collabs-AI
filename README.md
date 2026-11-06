@@ -1,6 +1,8 @@
-# 𓂀 ANUBIS AGENT CORE (`anubis-agent-core`)
+# 𓂀 ANUBIS AGENT — THE GUARDIAN OF CODE (`anubis-agent-core`)
 
-![Anubis Agent Emblem](./banner.svg)
+<p align="center">
+  <img src="./banner.png" alt="ANUBIS AGENT — THE GUARDIAN OF CODE" width="100%" />
+</p>
 
 **Anubis Agent Core** is the pure Go (`go 1.23+`) Holographic Bicameral execution and memory engine designed to surpass Hermes Agent and OpenClaw with native GPU acceleration (Metal on Apple Silicon M1/M2/M3/M4, CUDA/Vulkan on Windows & Linux), sub-millisecond `.synapse` binary tensor recall, and the **Weighing of the Heart** security judgement engine.
 
