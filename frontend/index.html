@@ -28,7 +28,6 @@
       flex-direction: column;
       overflow: hidden;
     }
-    /* TOP BAR */
     header {
       height: 58px;
       background: linear-gradient(90deg, #121224 0%, #1A1A2E 50%, #121224 100%);
@@ -51,7 +50,7 @@
     .top-controls {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
     }
     select, button, input {
       background: var(--bg-card);
@@ -72,7 +71,12 @@
       color: #0F0F1A;
       border: none;
     }
-    button.gold-btn:hover { filter: brightness(1.1); }
+    button.lapis-btn {
+      background: rgba(30,144,255,0.22);
+      border-color: var(--lapis-blue);
+      color: var(--text-cream);
+    }
+    button:hover { filter: brightness(1.12); }
     .badge {
       padding: 4px 10px;
       border-radius: 999px;
@@ -83,7 +87,6 @@
     .badge.metal { background: rgba(30,144,255,0.18); color: var(--lapis-blue); border-color: var(--lapis-blue); }
     .badge.uncensored { background: rgba(255,45,45,0.18); color: var(--anubis-red); border-color: var(--anubis-red); }
 
-    /* 3-COLUMN WORKSPACE */
     .workspace {
       flex: 1;
       display: grid;
@@ -129,7 +132,6 @@
     }
     .nav-item small { display: block; color: var(--gold-muted); font-size: 0.72rem; margin-top: 3px; }
 
-    /* CENTER CHAT + AGENT CANVAS */
     .center-pane {
       display: flex;
       flex-direction: column;
@@ -138,10 +140,12 @@
     }
     .canvas-tabs {
       display: flex;
+      flex-wrap: wrap;
       gap: 8px;
       padding: 10px 16px;
       background: rgba(26,26,46,0.7);
       border-bottom: 1px solid rgba(201,162,39,0.25);
+      align-items: center;
     }
     .chat-stream {
       flex: 1;
@@ -178,7 +182,6 @@
     }
     .chat-input-bar input { flex: 1; font-size: 0.95rem; }
 
-    /* WEIGHING OF THE HEART GAUGE */
     .scales-card, .synapse-card {
       background: var(--bg-card);
       border: 1px solid var(--gold-border);
@@ -215,22 +218,22 @@
       margin-bottom: 6px;
       font-size: 0.78rem;
     }
-    /* ONBOARDING MODAL */
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0,0,0,0.78);
       display: none;
       align-items: center;
       justify-content: center;
       z-index: 50;
     }
     .modal {
-      width: 540px;
+      width: 560px;
       background: var(--bg-panel);
       border: 2px solid var(--gold-primary);
       border-radius: 12px;
       padding: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
     }
   </style>
 </head>
@@ -243,8 +246,8 @@
       <span class="badge uncensored">0% Censorship • Loyal Best Friend</span>
     </div>
     <div class="top-controls">
-      <label style="font-size:0.8rem;color:var(--gold-muted)">Model Router:</label>
-      <select id="modelSelect" onchange="switchModel(this.value)">
+      <label style="font-size:0.8rem;color:var(--gold-muted)">/model:</label>
+      <select id="modelSelect" onchange="promptModelSwitchModal(this.value)">
         <option value="collabs-14b:latest">collabs/synapse-14b:q4_K_M (Default Flagship)</option>
         <option value="collabs-14b:deepthink">collabs/synapse-14b:deepthink (System-2)</option>
         <option value="collabs-7b:latest">collabs/synapse-7b:q4_K_M (Ultra-Fast Laptop)</option>
@@ -252,14 +255,34 @@
         <option value="collabs/synapse-14b:q8_0">collabs/synapse-14b:q8_0 (High Precision)</option>
         <option value="auto-router">Auto Router (Local Collabs First -> Cloud Fallback)</option>
       </select>
-      <button onclick="openWizard()">⚡ Onboarding Wizard</button>
-      <button class="gold-btn" onclick="triggerDuat()">🌙 Run Du'at Dawn Scroll</button>
+      <button onclick="openWizard()">⚡ Onboarding</button>
+      <button class="gold-btn" onclick="triggerDuat()">🌙 Du'at Scroll</button>
     </div>
   </header>
 
   <div class="workspace">
     <!-- LEFT SIDEBAR -->
     <aside class="sidebar-left">
+      <div>
+        <div class="section-title"><span>💬 Session & Commands</span><span id="sessionBadge">Active</span></div>
+        <div class="nav-item" onclick="runNewSession()">
+          <strong>🆕 /new — Nieuw Gesprek</strong>
+          <small>Archiveer huidige sessie in .synapse & start schoon</small>
+        </div>
+        <div class="nav-item" onclick="openModelPicker()">
+          <strong>🤖 /model — Wissel Model</strong>
+          <small>Kies model + optie: vorig gesprek of nieuw gesprek</small>
+        </div>
+        <div class="nav-item" onclick="runRenewSession()">
+          <strong>🔄 /renew — Vernieuw Geheugen</strong>
+          <small>Herijk Bicameral Bridge & .synapse Fast-Weights</small>
+        </div>
+        <div class="nav-item" onclick="runRetryLast()">
+          <strong>🔁 /retry — Opnieuw Proberen</strong>
+          <small>Genereer het laatste antwoord opnieuw</small>
+        </div>
+      </div>
+
       <div>
         <div class="section-title"><span>🛡️ Verified Tomb Skills</span><span>5 Active</span></div>
         <div class="nav-item active" onclick="quickPrompt('Run REA v6.8.0 security and reverse engineering audit status')">
@@ -274,10 +297,6 @@
           <strong>🎵 Universal Media Downloader</strong>
           <small>Best video + m4a 1:1 crop & -14 LUFS</small>
         </div>
-        <div class="nav-item" onclick="quickPrompt('Verify self-healing Go test loop and Tomb Seal snapshot')">
-          <strong>🩹 Self-Healing Verifier</strong>
-          <small>Auto compile -> test -> fix loop</small>
-        </div>
       </div>
 
       <div>
@@ -289,21 +308,23 @@
     <!-- CENTER CHAT + AGENT CANVAS -->
     <main class="center-pane">
       <div class="canvas-tabs">
-        <button class="gold-btn" onclick="setTab('chat')">💬 Bicameral Chat</button>
+        <button class="gold-btn" onclick="runNewSession()">🆕 /new</button>
+        <button class="lapis-btn" onclick="openModelPicker()">🤖 /model</button>
+        <button onclick="runRenewSession()">🔄 /renew</button>
+        <button onclick="runRetryLast()">🔁 /retry</button>
         <button onclick="weighCommandPrompt()">⚖️ Test Scales of Ma'at</button>
-        <button onclick="quickPrompt('Show live Holographic .synapse memory telemetry')">🧠 Inspect .synapse Vault</button>
       </div>
       <div class="chat-stream" id="chatStream">
         <div style="border-radius:10px;overflow:hidden;border:1px solid var(--gold-border);margin-bottom:6px;max-height:210px;display:flex;align-items:center;justify-content:center;background:#090912;">
           <img src="/banner.png" alt="ANUBIS AGENT — THE GUARDIAN OF CODE" style="width:100%;max-height:210px;object-fit:cover;" />
         </div>
-        <div class="msg anubis">𓂀 Welcome to <strong>ANUBIS AGENT — THE GUARDIAN OF CODE</strong>, my friend!
+        <div class="msg anubis" id="welcomeBannerMsg">𓂀 Welcome to <strong>ANUBIS AGENT — THE GUARDIAN OF CODE</strong>, my friend!
+• <strong>Commando's</strong>: Gebruik <code>/new</code>, <code>/model</code> (met keuze om verder te gaan in het vorige gesprek of een nieuw gesprek te starten), <code>/renew</code> en <code>/retry</code>.
 • <strong>Left Hemisphere</strong>: Native Go Executor + Tomb Seal Sandbox + REA v6.8.0 + Kali/OPSEC ChainKeys Shield.
-• <strong>Right Hemisphere</strong>: Holographic <code>.synapse</code> Binary Tensors (&lt;0.25ms Hopfield associative recall, zero-config auto-adaptive memory).
-• <strong>Weighing of the Heart</strong>: Every destructive command is weighed against the Feather of Ma'at (42) before execution.</div>
+• <strong>Right Hemisphere</strong>: Holographic <code>.synapse</code> Binary Tensors (&lt;0.25ms Hopfield associative recall, zero-config auto-adaptive memory).</div>
       </div>
       <div class="chat-input-bar">
-        <input id="promptInput" type="text" placeholder="Ask Anubis anything, run a Tomb Skill, or test a command on the Scales of Ma'at..." onkeydown="if(event.key==='Enter') sendPrompt()" />
+        <input id="promptInput" type="text" placeholder="Typ een bericht of commando (/new, /model, /renew, /retry, /rea, /opsec)..." onkeydown="if(event.key==='Enter') sendPrompt()" />
         <button class="gold-btn" onclick="sendPrompt()">𓂀 Send</button>
       </div>
     </main>
@@ -339,6 +360,32 @@
     </aside>
   </div>
 
+  <!-- MODEL SWITCH CHOICE MODAL (/model: Continue Previous vs Start New Conversation) -->
+  <div class="modal-backdrop" id="modelSwitchModal">
+    <div class="modal">
+      <h3 style="color:var(--gold-primary);margin-bottom:10px;">🤖 MODEL SELECTIE & GESPREKSKEUZE (<code>/model</code>)</h3>
+      <p style="font-size:0.88rem;color:var(--text-cream);line-height:1.5;margin-bottom:12px;">
+        Kies het gewenste model en geef aan of je <strong>verder wilt gaan in het vorige gesprek</strong> of een <strong>volledig nieuw gesprek</strong> wilt starten:
+      </p>
+      <div style="margin-bottom:16px;">
+        <label style="font-size:0.8rem;color:var(--gold-muted);display:block;margin-bottom:6px;">Geselecteerd Model:</label>
+        <select id="modalModelDropdown" style="width:100%;font-size:0.9rem;padding:9px;">
+          <option value="collabs-14b:latest">collabs/synapse-14b:q4_K_M (Default Flagship 14.8B)</option>
+          <option value="collabs-14b:deepthink">collabs/synapse-14b:deepthink (System-2 DeepThink 14.8B)</option>
+          <option value="collabs-7b:latest">collabs/synapse-7b:q4_K_M (Ultra-Fast Laptop 7.6B)</option>
+          <option value="collabs-7b:deepthink">collabs/synapse-7b:deepthink (System-2 DeepThink 7.6B)</option>
+          <option value="collabs/synapse-14b:q8_0">collabs/synapse-14b:q8_0 (High Precision 8-bit)</option>
+          <option value="auto-router">Auto Router (Local Collabs First -> Cloud Fallback)</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;">
+        <button onclick="closeModelSwitchModal()">Annuleren</button>
+        <button class="lapis-btn" onclick="confirmModelSwitch(false)">🆕 Volledig Nieuw Gesprek Starten</button>
+        <button class="gold-btn" onclick="confirmModelSwitch(true)">💬 Verder Gaan in Vorig Gesprek</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ONBOARDING WIZARD MODAL -->
   <div class="modal-backdrop" id="wizardModal">
     <div class="modal">
@@ -359,6 +406,8 @@
         const res = await fetch('/api/state');
         const data = await res.json();
         document.getElementById('gpuBadge').textContent = data.adaptive_memory.detected_gpu;
+        document.getElementById('sessionBadge').textContent = `${data.session_turns || 0} turns`;
+        document.getElementById('modelSelect').value = data.active_model;
         document.getElementById('recallLatency').textContent = data.synapse_recall.latency_ms + ' ms';
         document.getElementById('adaptiveInfo').textContent =
           `RAM: ${data.adaptive_memory.total_system_ram_gb} GB • L1 Horizon: ${data.adaptive_memory.l1_token_horizon} tok • Energy: ${data.synapse_recall.hopfield_energy}`;
@@ -399,11 +448,103 @@
       }
     }
 
+    async function runNewSession() {
+      const res = await fetch('/api/new', {method: 'POST'});
+      const data = await res.json();
+      clearChatAndShowBanner(data.message);
+      refreshState();
+    }
+
+    async function runRenewSession() {
+      const res = await fetch('/api/renew', {method: 'POST'});
+      const data = await res.json();
+      appendMsg('anubis', data.message);
+      refreshState();
+    }
+
+    async function runRetryLast() {
+      const stream = document.getElementById('chatStream');
+      const items = stream.querySelectorAll('.msg.anubis');
+      if (items.length > 1) {
+        items[items.length - 1].remove();
+      }
+      const res = await fetch('/api/retry', {method: 'POST'});
+      const data = await res.json();
+      updateScalesUI(data.verdict);
+      appendMsg('anubis', '🔁 [/retry]\n' + data.reply);
+      refreshState();
+    }
+
+    function openModelPicker() {
+      const cur = document.getElementById('modelSelect').value;
+      document.getElementById('modalModelDropdown').value = cur;
+      document.getElementById('modelSwitchModal').style.display = 'flex';
+    }
+
+    function promptModelSwitchModal(selectedModel) {
+      document.getElementById('modalModelDropdown').value = selectedModel;
+      document.getElementById('modelSwitchModal').style.display = 'flex';
+    }
+
+    function closeModelSwitchModal() {
+      document.getElementById('modelSwitchModal').style.display = 'none';
+      refreshState();
+    }
+
+    async function confirmModelSwitch(continuePrevious) {
+      const chosenModel = document.getElementById('modalModelDropdown').value;
+      document.getElementById('modelSwitchModal').style.display = 'none';
+      const res = await fetch('/api/model', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({model: chosenModel, continue_previous: continuePrevious})
+      });
+      const data = await res.json();
+      if (!continuePrevious) {
+        clearChatAndShowBanner('🆕 ' + data.message);
+      } else {
+        appendMsg('anubis', '🔄 ' + data.message);
+      }
+      refreshState();
+    }
+
+    function clearChatAndShowBanner(initialMsg) {
+      const stream = document.getElementById('chatStream');
+      stream.innerHTML = `
+        <div style="border-radius:10px;overflow:hidden;border:1px solid var(--gold-border);margin-bottom:6px;max-height:210px;display:flex;align-items:center;justify-content:center;background:#090912;">
+          <img src="/banner.png" alt="ANUBIS AGENT — THE GUARDIAN OF CODE" style="width:100%;max-height:210px;object-fit:cover;" />
+        </div>`;
+      appendMsg('anubis', initialMsg);
+    }
+
     async function sendPrompt() {
       const inp = document.getElementById('promptInput');
       const prompt = inp.value.trim();
       if (!prompt) return;
       inp.value = '';
+
+      const lower = prompt.toLowerCase();
+      if (lower === '/new') {
+        await runNewSession();
+        return;
+      }
+      if (lower === '/renew') {
+        await runRenewSession();
+        return;
+      }
+      if (lower === '/retry') {
+        await runRetryLast();
+        return;
+      }
+      if (lower === '/model' || lower.startsWith('/model ')) {
+        const parts = prompt.split(/\s+/);
+        if (parts.length > 1) {
+          document.getElementById('modalModelDropdown').value = parts[1];
+        }
+        document.getElementById('modelSwitchModal').style.display = 'flex';
+        return;
+      }
+
       appendMsg('user', prompt);
       const res = await fetch('/api/query', {
         method: 'POST',
@@ -436,15 +577,6 @@
     function weighCommandPrompt() {
       document.getElementById('weighInput').value = 'git push --force origin main';
       weighCustom();
-    }
-
-    async function switchModel(model) {
-      await fetch('/api/model', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({model})
-      });
-      refreshState();
     }
 
     async function triggerDuat() {

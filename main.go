@@ -60,6 +60,37 @@ func main() {
 		})
 	})
 
+	mux.HandleFunc("/api/new", func(w http.ResponseWriter, r *http.Request) {
+		sessID := app.Engine.NewSession()
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"session_id": sessID,
+			"message":    fmt.Sprintf("🆕 Volledig nieuw gesprek gestart (%s). Vorige context gearchiveerd in .synapse vault.", sessID),
+			"state":      app.GetState(),
+		})
+	})
+
+	mux.HandleFunc("/api/renew", func(w http.ResponseWriter, r *http.Request) {
+		sessID, turns := app.Engine.RenewSession()
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"session_id": sessID,
+			"turns":      turns,
+			"message":    fmt.Sprintf("🔄 [/renew] Bicameral Bridge & .synapse Fast-Weights vernieuwd voor sessie %s (%d berichten behouden).", sessID, turns),
+			"state":      app.GetState(),
+		})
+	})
+
+	mux.HandleFunc("/api/retry", func(w http.ResponseWriter, r *http.Request) {
+		reply, verdict, recall, _ := app.Engine.RetryLast(context.Background())
+		w.Header().Set("Content-Type", "application/json")
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"reply":   reply,
+			"verdict": verdict,
+			"recall":  recall,
+		})
+	})
+
 	mux.HandleFunc("/api/weigh", func(w http.ResponseWriter, r *http.Request) {
 		var body struct {
 			Command string `json:"command"`
@@ -72,12 +103,21 @@ func main() {
 
 	mux.HandleFunc("/api/model", func(w http.ResponseWriter, r *http.Request) {
 		var body struct {
-			Model string `json:"model"`
+			Model            string `json:"model"`
+			ContinuePrevious *bool  `json:"continue_previous"`
 		}
 		_ = json.NewDecoder(r.Body).Decode(&body)
-		app.Engine.SwitchModel(body.Model)
+		cont := true
+		if body.ContinuePrevious != nil {
+			cont = *body.ContinuePrevious
+		}
+		msg := app.Engine.SwitchModelWithMode(body.Model, cont)
 		w.Header().Set("Content-Type", "application/json")
-		_ = json.NewEncoder(w).Encode(app.GetState())
+		_ = json.NewEncoder(w).Encode(map[string]any{
+			"message":           msg,
+			"continue_previous": cont,
+			"state":             app.GetState(),
+		})
 	})
 
 	mux.HandleFunc("/api/duat", func(w http.ResponseWriter, r *http.Request) {
