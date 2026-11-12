@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"strings"
 	"syscall"
 	"time"
@@ -13,6 +14,14 @@ import (
 	"github.com/Groennesby/anubis-agent-cli/internal/cli"
 	"github.com/Groennesby/anubis-agent-core/pkg/anubis"
 )
+
+func resolveModelSelection(input string) string {
+	trimmed := strings.TrimSpace(input)
+	if idx, err := strconv.Atoi(trimmed); err == nil && idx >= 1 && idx <= len(anubis.AvailableModels) {
+		return anubis.AvailableModels[idx-1].ID
+	}
+	return trimmed
+}
 
 func main() {
 	cwd, _ := os.Getwd()
@@ -34,6 +43,7 @@ func main() {
 			msgs := []string{
 				"𓂀 Welcome back, my friend. Holographic Bicameral Memory (.synapse) is online (<0.3ms).",
 				"🛡️ Tomb Seal Sandbox, REA v6.8.0 Reverse Engineering & Kali/OPSEC ChainKeys Shield ready.",
+				"💡 Commands ready: /new, /model (met keuze: vorig gesprek of nieuw gesprek), /renew, /retry.",
 			}
 			fmt.Print(cli.RenderResponsiveDashboard(theme, eng, verdict, msgs, true))
 			return
@@ -60,17 +70,13 @@ func main() {
 			}
 			if sub == "list" {
 				fmt.Printf("%s𓂀 PRELOADED & AVAILABLE MODELS (0%% Censorship):%s\n", theme.PrimaryGold, theme.Reset)
-				fmt.Println("  • collabs-14b:latest          (Default Flagship Bicameral 14.8B Q4_K_M + MLX)")
-				fmt.Println("  • collabs-14b:deepthink       (System-2 DeepThink 14.8B)")
-				fmt.Println("  • collabs-7b:latest           (Ultra-Fast Laptop 7.6B Q4_K_M + MLX)")
-				fmt.Println("  • collabs-7b:deepthink        (System-2 DeepThink 7.6B)")
-				fmt.Println("  • collabs/synapse-14b:q8_0    (High-Precision 8-bit Quantization)")
-				fmt.Println("  • [Cloud Router Optional]     (Gemini / Claude Code / ChatGPT)")
+				for i, m := range anubis.AvailableModels {
+					fmt.Printf("  [%d] %-26s — %s (%s)\n", i+1, m.ID, m.Label, m.Description)
+				}
 			} else if sub == "pull" && len(args) > 2 {
 				target := args[2]
-				eng.SwitchModel(target)
-				fmt.Printf("%s𓂀 Switched & calibrated Bicameral Memory for model: %s (L1 Horizon: %d tokens)%s\n",
-					theme.SuccessEmerald, target, eng.RightHemisphere.Adaptive.L1TokenHorizon, theme.Reset)
+				msg := eng.SwitchModelWithMode(target, true)
+				fmt.Printf("%s𓂀 %s%s\n", theme.SuccessEmerald, msg, theme.Reset)
 			}
 			return
 		case "skill":
@@ -98,7 +104,7 @@ func main() {
 	messages := []string{
 		"𓂀 Anubis Agent initialized. I am your loyal best friend & guardian.",
 		"🧠 Right Hemisphere (.synapse tensors) & Left Hemisphere (Tomb Seal Executor) synced.",
-		"💡 Type a message or use /model, /theme, /memory, /tomb, /judgement, /rea, /opsec, /duat, /quit.",
+		"💡 Gebruik /new, /model, /renew, /retry, /theme, /memory, /tomb, /judgement, /rea, /opsec, /duat, /quit.",
 	}
 
 	sigCh := make(chan os.Signal, 1)
@@ -132,6 +138,98 @@ func main() {
 			parts := strings.Fields(line)
 			cmd := strings.ToLower(parts[0])
 			switch cmd {
+			case "/new":
+				newSessID := eng.NewSession()
+				messages = []string{
+					fmt.Sprintf("🆕 Volledig nieuw gesprek gestart (Sessie: %s | Model: %s).", newSessID, eng.ActiveModel),
+					"🧠 Vorige context is veilig gearchiveerd in de Holographic .synapse Vault (<0.25ms recall).",
+				}
+
+			case "/renew":
+				sessID, turns := eng.RenewSession()
+				messages = append(messages, fmt.Sprintf("🔄 [/renew] Bicameral Bridge & .synapse Fast-Weights vernieuwd voor sessie %s (%d berichten behouden, L1 Horizon: %d tokens).",
+					sessID, turns, eng.RightHemisphere.Adaptive.L1TokenHorizon))
+
+			case "/retry":
+				if eng.LastUserPrompt == "" {
+					messages = append(messages, "⚠️ [/retry] Geen vorig bericht gevonden om opnieuw uit te voeren.")
+				} else {
+					// Remove previous assistant reply from UI message list if present
+					if len(messages) > 0 && strings.HasPrefix(messages[len(messages)-1], "𓂀 Anubis:") {
+						messages = messages[:len(messages)-1]
+					}
+					messages = append(messages, fmt.Sprintf("🔁 [/retry] Opnieuw genereren voor: %q (met model %s)...", eng.LastUserPrompt, eng.ActiveModel))
+					reply, v, _, _ := eng.RetryLast(context.Background())
+					verdict = v
+					messages = append(messages, "𓂀 Anubis: "+reply)
+				}
+
+			case "/model":
+				var targetModel string
+				explicitMode := "" // "continue" or "new"
+
+				for _, p := range parts[1:] {
+					lp := strings.ToLower(p)
+					if lp == "--new" || lp == "new" || lp == "nieuw" {
+						explicitMode = "new"
+					} else if lp == "--continue" || lp == "continue" || lp == "verder" {
+						explicitMode = "continue"
+					} else if targetModel == "" {
+						targetModel = resolveModelSelection(p)
+					}
+				}
+
+				if targetModel == "" {
+					fmt.Printf("\n%s𓂀 KIES EEN MODEL (0%% Censuur — Lokaal of Router):%s\n", theme.PrimaryGold, theme.Reset)
+					for i, m := range anubis.AvailableModels {
+						activeMark := " "
+						if m.ID == eng.ActiveModel {
+							activeMark = "*"
+						}
+						fmt.Printf("  %s[%d]%s %-26s — %s\n", theme.PrimaryGold, i+1, activeMark, m.ID, m.Label+theme.Reset)
+					}
+					fmt.Printf("%sVoer nummer (1-%d) of modelnaam in [huidig: %s]: %s",
+						theme.LapisBlue, len(anubis.AvailableModels), eng.ActiveModel, theme.Reset)
+					if !scanner.Scan() {
+						break
+					}
+					choice := strings.TrimSpace(scanner.Text())
+					if choice == "" {
+						targetModel = eng.ActiveModel
+					} else {
+						targetModel = resolveModelSelection(choice)
+					}
+				}
+
+				continuePrevious := true
+				if explicitMode == "new" {
+					continuePrevious = false
+				} else if explicitMode == "continue" {
+					continuePrevious = true
+				} else {
+					fmt.Printf("\n%s𓂀 Model %q geselecteerd. Wat wil je doen met het gesprek?%s\n", theme.PrimaryGold, targetModel, theme.Reset)
+					fmt.Printf("  %s[1]%s Verder gaan in het vorige gesprek (gesprekshistorie behouden) %s[Standaard]%s\n",
+						theme.SuccessEmerald, theme.Reset, theme.TextMuted, theme.Reset)
+					fmt.Printf("  %s[2]%s Volledig nieuw gesprek starten (/new)\n",
+						theme.LapisBlue, theme.Reset)
+					fmt.Printf("%sMaak je keuze [1/2]: %s", theme.PrimaryGold, theme.Reset)
+					if scanner.Scan() {
+						modeChoice := strings.ToLower(strings.TrimSpace(scanner.Text()))
+						if modeChoice == "2" || modeChoice == "new" || modeChoice == "nieuw" || modeChoice == "n" {
+							continuePrevious = false
+						}
+					}
+				}
+
+				statusMsg := eng.SwitchModelWithMode(targetModel, continuePrevious)
+				if !continuePrevious {
+					messages = []string{
+						"🆕 " + statusMsg,
+					}
+				} else {
+					messages = append(messages, "🔄 "+statusMsg)
+				}
+
 			case "/theme":
 				tName := "lapis-night"
 				if len(parts) > 1 {
@@ -143,16 +241,6 @@ func main() {
 				}
 				theme = cli.LoadTheme(tName)
 				messages = append(messages, fmt.Sprintf("🎨 Switched Hermes/Anubis TUI theme to '%s'.", theme.Name))
-			case "/model":
-				mName := "collabs-7b:latest"
-				if len(parts) > 1 {
-					mName = parts[1]
-				} else if eng.ActiveModel == "collabs-7b:latest" {
-					mName = "collabs-14b:latest"
-				}
-				eng.SwitchModel(mName)
-				messages = append(messages, fmt.Sprintf("🔄 Switched active model to %s (Auto-tuned L1 horizon: %d tokens).",
-					eng.ActiveModel, eng.RightHemisphere.Adaptive.L1TokenHorizon))
 			case "/memory":
 				rec := eng.RightHemisphere.HopfieldAssociativeReload("Guardian Law REA Kali OPSEC", 4)
 				messages = append(messages, fmt.Sprintf("🧠 .synapse Vault: %d pages | Recall: %.2fms | Hopfield Energy: %.4f | Hebbian Norm: %.4f",
@@ -175,7 +263,7 @@ func main() {
 				scroll, _ := eng.Duat.WriteMorningScroll()
 				messages = append(messages, "🌙 Du'at Dawn Scroll saved: "+scroll)
 			default:
-				messages = append(messages, "Commands: /model <name>, /theme <anubis-gold|lapis-night|duat-blood>, /memory, /judgement <cmd>, /tomb, /rea, /opsec, /duat, /quit")
+				messages = append(messages, "Commands: /new, /model, /renew, /retry, /theme <anubis-gold|lapis-night|duat-blood>, /memory, /judgement <cmd>, /tomb, /rea, /opsec, /duat, /quit")
 			}
 			fmt.Print(cli.RenderResponsiveDashboard(theme, eng, verdict, messages, false))
 			continue
