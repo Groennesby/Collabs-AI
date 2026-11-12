@@ -9,6 +9,7 @@ import (
 )
 
 type BicameralEngine = executor.BicameralEngine
+type ConversationTurn = executor.ConversationTurn
 type Verdict = judgement.Verdict
 type ScalesOfMaat = judgement.ScalesOfMaat
 type BicameralVault = memory.BicameralVault
@@ -18,6 +19,8 @@ type TombSeal = tomb.TombSeal
 type DuatDaemon = duat.DuatDaemon
 
 const FeatherWeight = judgement.FeatherWeight
+
+var AvailableModels = executor.AvailableModels
 
 func NewBicameralEngine(workspaceDir string) (*BicameralEngine, error) {
 	return executor.NewBicameralEngine(workspaceDir)
