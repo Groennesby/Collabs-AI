@@ -1,0 +1,16 @@
+{
+  "id": "self-healing-coder",
+  "name": "Autonomous Compile-Test-Fix Self-Healing Loop",
+  "version": "1.0.0",
+  "category": "autonomous-engineering",
+  "sandboxed": true,
+  "self_healing": true,
+  "max_heart_risk": 20,
+  "allowed_tools": [
+    "go",
+    "git",
+    "python3"
+  ],
+  "seal_hash": "tomb-seal-74d962ccddc41079",
+  "verified": true
+}

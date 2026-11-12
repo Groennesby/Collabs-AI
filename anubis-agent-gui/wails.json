@@ -1,0 +1,19 @@
+{
+  "$schema": "https://wails.io/schemas/config.v2.json",
+  "name": "Anubis Agent",
+  "outputfilename": "anubis-gui",
+  "frontend:dir": "./frontend",
+  "frontend:install": "",
+  "frontend:build": "",
+  "author": {
+    "name": "Dave Groennesby",
+    "email": "collabs@groennesby.ai"
+  },
+  "info": {
+    "companyName": "Collabs Sovereign AI",
+    "productName": "Anubis Agent",
+    "productVersion": "1.0.0",
+    "copyright": "Copyright © 2026 Dave Groennesby",
+    "comments": "Holographic Bicameral Sovereign AI Desktop Agent"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "id": "kali-opsec-chainkeys",
+  "name": "Kali Linux Defensive Toolkit \u0026 ChainKeys OPSEC Privacy Shield",
+  "version": "1.0.0",
+  "category": "defensive-opsec",
+  "sandboxed": true,
+  "self_healing": true,
+  "max_heart_risk": 25,
+  "allowed_tools": [
+    "nmap",
+    "dig",
+    "whois",
+    "openssl",
+    "nc",
+    "proxychains4",
+    "curl"
+  ],
+  "seal_hash": "tomb-seal-e73c5445af948fea",
+  "verified": true
+}

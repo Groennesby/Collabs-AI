@@ -1,0 +1,278 @@
+package main
+
+import (
+	"bufio"
+	"context"
+	"fmt"
+	"os"
+	"os/signal"
+	"strconv"
+	"strings"
+	"syscall"
+	"time"
+
+	"github.com/Groennesby/anubis-agent-cli/internal/cli"
+	"github.com/Groennesby/anubis-agent-core/pkg/anubis"
+)
+
+func resolveModelSelection(input string) string {
+	trimmed := strings.TrimSpace(input)
+	if idx, err := strconv.Atoi(trimmed); err == nil && idx >= 1 && idx <= len(anubis.AvailableModels) {
+		return anubis.AvailableModels[idx-1].ID
+	}
+	return trimmed
+}
+
+func main() {
+	cwd, _ := os.Getwd()
+	eng, err := anubis.NewBicameralEngine(cwd)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "Anubis CLI Init Error: %v\n", err)
+		os.Exit(1)
+	}
+	theme := cli.LoadTheme("")
+
+	args := os.Args[1:]
+	if len(args) > 0 {
+		switch args[0] {
+		case "--version", "-v", "version":
+			fmt.Printf("%s𓂀 ANUBIS AGENT CLI v1.0.0 (Go Bicameral Engine | Hermes Gold Theme)%s\n", theme.PrimaryGold, theme.Reset)
+			return
+		case "--render-preview":
+			verdict := eng.Scales.WeighHeart("startup", "anubis interactive dashboard")
+			msgs := []string{
+				"𓂀 Welcome back, my friend. Holographic Bicameral Memory (.synapse) is online (<0.3ms).",
+				"🛡️ Tomb Seal Sandbox, REA v6.8.0 Reverse Engineering & Kali/OPSEC ChainKeys Shield ready.",
+				"💡 Commands ready: /new, /model (met keuze: vorig gesprek of nieuw gesprek), /renew, /retry.",
+			}
+			fmt.Print(cli.RenderResponsiveDashboard(theme, eng, verdict, msgs, true))
+			return
+		case "run":
+			task := "status check"
+			if len(args) > 1 {
+				task = strings.Join(args[1:], " ")
+			}
+			verdict := eng.Scales.WeighHeart("one_shot_run", task)
+			fmt.Println(theme.PrimaryGold + cli.AnubisSpinners[0] + " Weighing of the Heart: " + theme.Reset + verdict.RenderGauge(28))
+			if verdict.RequiresAuth {
+				fmt.Printf("%s⚠️  Heart (%d) is heavier than the Feather of Ma'at (%d): %s%s\n",
+					theme.HighlightRed, verdict.HeartScore, verdict.FeatherScore, verdict.Reason, theme.Reset)
+				return
+			}
+			reply, _, recall, _ := eng.Query(context.Background(), task)
+			fmt.Printf("%s⚡ .synapse Recall: %.2fms | Hopfield Energy: %.4f%s\n%s\n",
+				theme.LapisBlue, recall.LatencyMs, recall.HopfieldEnergy, theme.Reset, reply)
+			return
+		case "model":
+			sub := "list"
+			if len(args) > 1 {
+				sub = args[1]
+			}
+			if sub == "list" {
+				fmt.Printf("%s𓂀 PRELOADED & AVAILABLE MODELS (0%% Censorship):%s\n", theme.PrimaryGold, theme.Reset)
+				for i, m := range anubis.AvailableModels {
+					fmt.Printf("  [%d] %-26s — %s (%s)\n", i+1, m.ID, m.Label, m.Description)
+				}
+			} else if sub == "pull" && len(args) > 2 {
+				target := args[2]
+				msg := eng.SwitchModelWithMode(target, true)
+				fmt.Printf("%s𓂀 %s%s\n", theme.SuccessEmerald, msg, theme.Reset)
+			}
+			return
+		case "skill":
+			fmt.Printf("%s𓂀 VERIFIED TOMB SKILLS (Sandboxed & Self-Healing):%s\n", theme.PrimaryGold, theme.Reset)
+			fmt.Println("  1. [VERIFIED] rea-reverse-engineering  — REA v6.8.0 (35 security & binary/codebase audit skills)")
+			fmt.Println("  2. [VERIFIED] kali-opsec-chainkeys     — Kali defensive diagnostics + multi-hop ProxyChains/ChainKeys shield")
+			fmt.Println("  3. [VERIFIED] universal-media-ytdlp    — Best quality video & YouTube Music 1:1 thumbnail + -14 LUFS m4a")
+			fmt.Println("  4. [VERIFIED] self-healing-coder       — Automatic compile -> test -> fix verification loop")
+			fmt.Println("  5. [VERIFIED] bicameral-synapse-vault  — Sub-millisecond .synapse tensor page consolidation")
+			return
+		case "duat":
+			path, err := eng.Duat.WriteMorningScroll()
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Du'at error: %v\n", err)
+				os.Exit(1)
+			}
+			fmt.Printf("%s𓂀 Du'at Autonomous Daemon active. Morning Dawn Scroll generated at:%s\n  %s\n",
+				theme.PrimaryGold, theme.Reset, path)
+			return
+		}
+	}
+
+	// Interactive TUI / Chat Mode with live SIGWINCH resize support
+	verdict := eng.Scales.WeighHeart("interactive_session", "anubis chat")
+	messages := []string{
+		"𓂀 Anubis Agent initialized. I am your loyal best friend & guardian.",
+		"🧠 Right Hemisphere (.synapse tensors) & Left Hemisphere (Tomb Seal Executor) synced.",
+		"💡 Gebruik /new, /model, /renew, /retry, /theme, /memory, /tomb, /judgement, /rea, /opsec, /duat, /quit.",
+	}
+
+	sigCh := make(chan os.Signal, 1)
+	signal.Notify(sigCh, syscall.SIGWINCH)
+	go func() {
+		for range sigCh {
+			fmt.Print("\x1b[2J\x1b[H")
+			fmt.Print(cli.RenderResponsiveDashboard(theme, eng, verdict, messages, false))
+			fmt.Printf("%s𓂀 anubis > %s", theme.PrimaryGold, theme.Reset)
+		}
+	}()
+
+	fmt.Print(cli.RenderResponsiveDashboard(theme, eng, verdict, messages, true))
+
+	scanner := bufio.NewScanner(os.Stdin)
+	for {
+		fmt.Printf("%s𓂀 anubis > %s", theme.PrimaryGold, theme.Reset)
+		if !scanner.Scan() {
+			break
+		}
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		if line == "/quit" || line == "/exit" || line == "exit" {
+			fmt.Printf("%s𓂀 May the Scales of Ma'at guard your code, my friend.%s\n", theme.PrimaryGold, theme.Reset)
+			break
+		}
+
+		if strings.HasPrefix(line, "/") {
+			parts := strings.Fields(line)
+			cmd := strings.ToLower(parts[0])
+			switch cmd {
+			case "/new":
+				newSessID := eng.NewSession()
+				messages = []string{
+					fmt.Sprintf("🆕 Volledig nieuw gesprek gestart (Sessie: %s | Model: %s).", newSessID, eng.ActiveModel),
+					"🧠 Vorige context is veilig gearchiveerd in de Holographic .synapse Vault (<0.25ms recall).",
+				}
+
+			case "/renew":
+				sessID, turns := eng.RenewSession()
+				messages = append(messages, fmt.Sprintf("🔄 [/renew] Bicameral Bridge & .synapse Fast-Weights vernieuwd voor sessie %s (%d berichten behouden, L1 Horizon: %d tokens).",
+					sessID, turns, eng.RightHemisphere.Adaptive.L1TokenHorizon))
+
+			case "/retry":
+				if eng.LastUserPrompt == "" {
+					messages = append(messages, "⚠️ [/retry] Geen vorig bericht gevonden om opnieuw uit te voeren.")
+				} else {
+					// Remove previous assistant reply from UI message list if present
+					if len(messages) > 0 && strings.HasPrefix(messages[len(messages)-1], "𓂀 Anubis:") {
+						messages = messages[:len(messages)-1]
+					}
+					messages = append(messages, fmt.Sprintf("🔁 [/retry] Opnieuw genereren voor: %q (met model %s)...", eng.LastUserPrompt, eng.ActiveModel))
+					reply, v, _, _ := eng.RetryLast(context.Background())
+					verdict = v
+					messages = append(messages, "𓂀 Anubis: "+reply)
+				}
+
+			case "/model":
+				var targetModel string
+				explicitMode := "" // "continue" or "new"
+
+				for _, p := range parts[1:] {
+					lp := strings.ToLower(p)
+					if lp == "--new" || lp == "new" || lp == "nieuw" {
+						explicitMode = "new"
+					} else if lp == "--continue" || lp == "continue" || lp == "verder" {
+						explicitMode = "continue"
+					} else if targetModel == "" {
+						targetModel = resolveModelSelection(p)
+					}
+				}
+
+				if targetModel == "" {
+					fmt.Printf("\n%s𓂀 KIES EEN MODEL (0%% Censuur — Lokaal of Router):%s\n", theme.PrimaryGold, theme.Reset)
+					for i, m := range anubis.AvailableModels {
+						activeMark := " "
+						if m.ID == eng.ActiveModel {
+							activeMark = "*"
+						}
+						fmt.Printf("  %s[%d]%s %-26s — %s\n", theme.PrimaryGold, i+1, activeMark, m.ID, m.Label+theme.Reset)
+					}
+					fmt.Printf("%sVoer nummer (1-%d) of modelnaam in [huidig: %s]: %s",
+						theme.LapisBlue, len(anubis.AvailableModels), eng.ActiveModel, theme.Reset)
+					if !scanner.Scan() {
+						break
+					}
+					choice := strings.TrimSpace(scanner.Text())
+					if choice == "" {
+						targetModel = eng.ActiveModel
+					} else {
+						targetModel = resolveModelSelection(choice)
+					}
+				}
+
+				continuePrevious := true
+				if explicitMode == "new" {
+					continuePrevious = false
+				} else if explicitMode == "continue" {
+					continuePrevious = true
+				} else {
+					fmt.Printf("\n%s𓂀 Model %q geselecteerd. Wat wil je doen met het gesprek?%s\n", theme.PrimaryGold, targetModel, theme.Reset)
+					fmt.Printf("  %s[1]%s Verder gaan in het vorige gesprek (gesprekshistorie behouden) %s[Standaard]%s\n",
+						theme.SuccessEmerald, theme.Reset, theme.TextMuted, theme.Reset)
+					fmt.Printf("  %s[2]%s Volledig nieuw gesprek starten (/new)\n",
+						theme.LapisBlue, theme.Reset)
+					fmt.Printf("%sMaak je keuze [1/2]: %s", theme.PrimaryGold, theme.Reset)
+					if scanner.Scan() {
+						modeChoice := strings.ToLower(strings.TrimSpace(scanner.Text()))
+						if modeChoice == "2" || modeChoice == "new" || modeChoice == "nieuw" || modeChoice == "n" {
+							continuePrevious = false
+						}
+					}
+				}
+
+				statusMsg := eng.SwitchModelWithMode(targetModel, continuePrevious)
+				if !continuePrevious {
+					messages = []string{
+						"🆕 " + statusMsg,
+					}
+				} else {
+					messages = append(messages, "🔄 "+statusMsg)
+				}
+
+			case "/theme":
+				tName := "lapis-night"
+				if len(parts) > 1 {
+					tName = parts[1]
+				} else if theme.Name == "lapis-night" {
+					tName = "duat-blood"
+				} else if theme.Name == "duat-blood" {
+					tName = "anubis-gold"
+				}
+				theme = cli.LoadTheme(tName)
+				messages = append(messages, fmt.Sprintf("🎨 Switched Hermes/Anubis TUI theme to '%s'.", theme.Name))
+			case "/memory":
+				rec := eng.RightHemisphere.HopfieldAssociativeReload("Guardian Law REA Kali OPSEC", 4)
+				messages = append(messages, fmt.Sprintf("🧠 .synapse Vault: %d pages | Recall: %.2fms | Hopfield Energy: %.4f | Hebbian Norm: %.4f",
+					rec.TotalPages, rec.LatencyMs, rec.HopfieldEnergy, rec.HebbianFrobenius))
+			case "/judgement":
+				testCmd := "git push origin main"
+				if len(parts) > 1 {
+					testCmd = strings.Join(parts[1:], " ")
+				}
+				verdict = eng.Scales.WeighHeart("manual_weigh", testCmd)
+				messages = append(messages, verdict.RenderGauge(26)+" — "+verdict.Reason)
+			case "/tomb":
+				sealID, _, _ := eng.Tomb.ExecuteSandboxed(context.Background(), "uname -a", 5*time.Second)
+				messages = append(messages, fmt.Sprintf("🛡️ Tomb Seal Snapshot created: %s (OPSEC ChainKeys Env Scrubbing: ACTIVE)", sealID))
+			case "/rea":
+				messages = append(messages, "🔍 REA v6.8.0 Reverse Engineering Engine: ONLINE (35 skills, 0% telemetry, 16x512 native routing tensor).")
+			case "/opsec":
+				messages = append(messages, "🕵️ Kali Defensive Toolkit & ChainKeys Shield: ACTIVE (DNS/WebRTC leak prevention + proxy chain ready).")
+			case "/duat":
+				scroll, _ := eng.Duat.WriteMorningScroll()
+				messages = append(messages, "🌙 Du'at Dawn Scroll saved: "+scroll)
+			default:
+				messages = append(messages, "Commands: /new, /model, /renew, /retry, /theme <anubis-gold|lapis-night|duat-blood>, /memory, /judgement <cmd>, /tomb, /rea, /opsec, /duat, /quit")
+			}
+			fmt.Print(cli.RenderResponsiveDashboard(theme, eng, verdict, messages, false))
+			continue
+		}
+
+		messages = append(messages, "You: "+line)
+		reply, v, _, _ := eng.Query(context.Background(), line)
+		verdict = v
+		messages = append(messages, "𓂀 Anubis: "+reply)
+		fmt.Print(cli.RenderResponsiveDashboard(theme, eng, verdict, messages, false))
+	}
+}

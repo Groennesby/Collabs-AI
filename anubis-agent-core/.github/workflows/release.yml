@@ -1,0 +1,43 @@
+name: Build & Release Anubis Agent
+
+on:
+  push:
+    branches: [ main, anubis-agent-* ]
+  workflow_dispatch:
+
+jobs:
+  build-matrix:
+    strategy:
+      matrix:
+        include:
+          - os: macos-14
+            goos: darwin
+            goarch: arm64
+            gpu_flags: "-tags metal"
+            artifact: anubis-macos-arm64-metal
+          - os: macos-13
+            goos: darwin
+            goarch: amd64
+            gpu_flags: "-tags metal"
+            artifact: anubis-macos-intel
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            gpu_flags: "-tags cuda"
+            artifact: anubis-linux-amd64-cuda
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            gpu_flags: "-tags cuda"
+            artifact: anubis-windows-amd64-cuda.exe
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.23'
+      - name: Build Binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: go build ${{ matrix.gpu_flags }} -o dist/${{ matrix.artifact }} .

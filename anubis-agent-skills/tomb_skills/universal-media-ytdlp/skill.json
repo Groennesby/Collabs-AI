@@ -1,0 +1,16 @@
+{
+  "id": "universal-media-ytdlp",
+  "name": "Universal Video \u0026 YouTube Music 1:1 Thumbnail + -14 LUFS Downloader",
+  "version": "1.0.0",
+  "category": "media-pipeline",
+  "sandboxed": true,
+  "self_healing": true,
+  "max_heart_risk": 18,
+  "allowed_tools": [
+    "yt-dlp",
+    "ffmpeg",
+    "ffprobe"
+  ],
+  "seal_hash": "tomb-seal-5d04d333c01bfff2",
+  "verified": true
+}
